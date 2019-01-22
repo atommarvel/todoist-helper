@@ -3,7 +3,8 @@ const request = require('request-promise');
 
 const CommandList = require('./CommandList');
 const config = require('./todoist.json');
-const baseUrl = "https://todoist.com/api/v7";
+const baseUrl7 = "https://todoist.com/api/v7";
+const baseUrl8 = "https://beta.todoist.com/API/v8";
 
 /**
  * In charge of interacting with Todoist APIs.
@@ -16,45 +17,35 @@ class TodoistClient {
         this.syncToken = "*";
     }
 
+    /**
+     * Found under Settings > Integrations > API token
+     */
     getAPIKey() {
         return config.apiKey;
     }
 
-    getCompletedBody() {
-        // TODO: pagination, only look at last 7 days, limit 50
-        return {
-            token: this.getAPIKey()
-        };
-    }
-
-    async test() {
-        let dailyItems = await this.getAllCompletedDailyItems();
-        let filledItems = await this.fetchAllItems(dailyItems);
-        console.log("filled items:");
-        console.log(filledItems);
-        this.uncompleteItems(filledItems);
-        this.setAllNonChildItemsDueToday(filledItems);
-        console.log("finished")
-    }
-
-    getAllCompletedDailyItems() {
-        const url = `${baseUrl}/completed/get_all`;
-        const body = this.getCompletedBody();
+    getProjectDirectory() {
         const options = {
-            method: 'POST',
-            uri: url,
-            body: body,
-            json: true // Automatically stringifies the body to JSON
+            method: 'GET',
+            uri: `${baseUrl8}/projects`,
+            headers: {
+                'Authorization': `Bearer ${this.getAPIKey()}`
+            },
+            json: true
         };
-        return request(options)
-            .then(data => data.items)
-            .then(items => items.filter(this.createItemLabelFilter("daily")));
+        return request(options);
     }
 
-    createItemLabelFilter(label) {
-        return function(item) {
-            return item.content.indexOf(`@${label}`) !== -1;
-        }
+    getTasks() {
+        const options = {
+            method: 'GET',
+            uri: `${baseUrl8}/tasks`,
+            headers: {
+                'Authorization': `Bearer ${this.getAPIKey()}`
+            },
+            json: true
+        };
+        return request(options);
     }
 
     fetchAllItems(items) {
@@ -64,7 +55,7 @@ class TodoistClient {
     fetchItem(item) {
         const options = {
             method: 'POST',
-            uri: `${baseUrl}/items/get`,
+            uri: `${baseUrl7}/items/get`,
             body: {
                 token: this.getAPIKey(),
                 item_id: item.id
@@ -78,29 +69,10 @@ class TodoistClient {
             })
     }
 
-    uncompleteItems(items) {
-        let commandList = new CommandList();
-        let ids = items.map(item => item.id);
-        commandList.addUncompleteCommand(ids);
-        return this.postCommand(commandList);
-    }
-
-    setAllNonChildItemsDueToday(items) {
-        let commandList = new CommandList();
-        let nonChildItems = items.filter(item => item.indent === 1);
-        nonChildItems.forEach(item => {
-            commandList.addItemUpdateCommand({
-                id: item.id,
-                date_string: "today"
-            })
-        });
-        return this.postCommand(commandList);
-    }
-
     postCommand(commandList) {
         const options = {
             method: 'POST',
-            uri: `${baseUrl}/sync`,
+            uri: `${baseUrl7}/sync`,
             body: {
                 token: this.getAPIKey(),
                 commands: commandList.getCommandBody()
