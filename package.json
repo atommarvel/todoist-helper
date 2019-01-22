@@ -1,22 +1,18 @@
 {
   "name": "receptionist",
-  "version": "0.0.1",
-  "description": "A digital secretary for Todoist",
-  "main": "index.js",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./bin/www"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/atommarvel/receptionist.git"
-  },
-  "keywords": [
-    "todoist"
-  ],
-  "author": "Atom Raiff",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/atommarvel/receptionist/issues"
-  },
-  "homepage": "https://github.com/atommarvel/receptionist#readme"
+  "dependencies": {
+    "bluebird": "^3.5.3",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "ejs": "~2.5.7",
+    "express": "~4.16.0",
+    "http-errors": "~1.6.2",
+    "morgan": "~1.9.0",
+    "request-promise": "^4.2.2"
+  }
 }
