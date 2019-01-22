@@ -1,0 +1,22 @@
+{
+  "name": "receptionist",
+  "version": "0.0.1",
+  "description": "A digital secretary for Todoist",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atommarvel/receptionist.git"
+  },
+  "keywords": [
+    "todoist"
+  ],
+  "author": "Atom Raiff",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/atommarvel/receptionist/issues"
+  },
+  "homepage": "https://github.com/atommarvel/receptionist#readme"
+}
