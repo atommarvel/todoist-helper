@@ -38,17 +38,20 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-function test() {
+async function test() {
   const client = require('./todoist/TodoistClient');
   // TODO: RESUME
   /*
-  1. create projects class
   2. insert all tasks into the appropriate project in the correct order
   3. add topQueue to highest task without a due date (create a command for this)
   4. remove topQueue from any other task in the project (create a command for this)
    */
-  client.getProjectDirectory().then(console.log);
-  client.getTasks().then(console.log);
+  let projects = await client.getProjects();
+  let tasks = await client.getTasks();
+  tasks.forEach(task => {
+    projects[task.project_id].addTask(task);
+  });
+  console.log(projects);
 }
 
 test();

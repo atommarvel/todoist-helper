@@ -2,6 +2,7 @@ const Promise = require('bluebird');
 const request = require('request-promise');
 
 const CommandList = require('./CommandList');
+const Project = require('./Project');
 const config = require('./todoist.json');
 const baseUrl7 = "https://todoist.com/api/v7";
 const baseUrl8 = "https://beta.todoist.com/API/v8";
@@ -24,7 +25,7 @@ class TodoistClient {
         return config.apiKey;
     }
 
-    getProjectDirectory() {
+    async getProjects() {
         const options = {
             method: 'GET',
             uri: `${baseUrl8}/projects`,
@@ -33,7 +34,13 @@ class TodoistClient {
             },
             json: true
         };
-        return request(options);
+        let projectsJsonList = await request(options);
+        return projectsJsonList
+            .map(proj => new Project(proj))
+            .reduce((map, project) => {
+                map[project.id] = project;
+                return map;
+            });
     }
 
     getTasks() {
