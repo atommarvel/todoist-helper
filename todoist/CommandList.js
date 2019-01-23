@@ -11,14 +11,31 @@ class CommandList {
 
     addUncompleteCommand(ids) {
         this.commands.push(
-            this.createCommand("item_uncomplete", {ids: ids})
+            new Command("item_uncomplete", {ids: ids})
         );
     }
 
     addItemUpdateCommand(updates) {
         this.commands.push(
-            this.createCommand("item_update", updates)
+            new Command("item_update", updates)
         );
+    }
+
+    addLabelCommand(task, labelId) {
+        let labelIds = addIfMissing(task['label_ids'], labelId);
+        this.updateLabelCommand(task.id, labelIds);
+    }
+
+    removeLabelCommand(task, labelId) {
+        let labelIds = removeIfPresent(task['label_ids'], labelId);
+        this.updateLabelCommand(task.id, labelIds);
+    }
+
+    updateLabelCommand(taskId, labels) {
+        this.addItemUpdateCommand({
+            id: taskId,
+            labels: labels
+        });
     }
 
     createCommand(type, args) {
@@ -30,13 +47,22 @@ class CommandList {
     }
 }
 
+function addIfMissing(ids, id) {
+    if (ids.indexOf(id) === -1) {
+        ids.push(id);
+    }
+    return ids;
+}
+
+function removeIfPresent(ids, id) {
+    return ids.filter(item => item !== id)
+}
+
 class Command {
     constructor(type, args) {
-        this.reqObj = {
-            uuid: uuidv4(),
-            type: type,
-            args: args
-        };
+        this.uuid = uuidv4();
+        this.type = type;
+        this.args = args;
     }
 }
 

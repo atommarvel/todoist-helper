@@ -40,7 +40,7 @@ class TodoistClient {
             .reduce((map, project) => {
                 map[project.id] = project;
                 return map;
-            });
+            }, {});
     }
 
     getTasks() {
@@ -71,7 +71,6 @@ class TodoistClient {
         };
         return request(options)
             .then(result => {
-                console.log(`filled '${result.item.content}'`);
                 return result.item;
             })
     }
