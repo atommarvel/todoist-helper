@@ -17,9 +17,7 @@ class Project {
     getTopQueueState() {
         this.tasks.sort(taskOrderCompare);
         // find top task without due date field
-        let candidate = this.tasks.find(task => {
-            return !('due' in task);
-        });
+        let candidate = this.tasks.find(this.meetsTopQueueRequirements.bind(this));
         let candidateId = -1;
         if (candidate) {
             candidateId = candidate.id;
@@ -31,6 +29,11 @@ class Project {
             return isLabeledTopQueue && !isCandidate;
         });
         return new TopQueueState(candidate, fakers);
+    }
+
+    meetsTopQueueRequirements(task) {
+        return !('due' in task) &&
+            task.indent === 1;
     }
 }
 
