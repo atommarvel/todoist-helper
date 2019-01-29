@@ -1,7 +1,5 @@
-const Promise = require('bluebird');
 const request = require('request-promise');
 
-const CommandList = require('./CommandList');
 const Project = require('./Project');
 const config = require('./todoist.json');
 const baseUrl7 = "https://todoist.com/api/v7";
@@ -12,10 +10,10 @@ const baseUrl8 = "https://beta.todoist.com/API/v8";
  * https://developer.todoist.com/
  */
 
-class TodoistClient {
+class TodoistRepository {
 
-    constructor() {
-        this.syncToken = "*";
+    constructor(resData) {
+        this.resData = resDatal;
     }
 
     /**
@@ -25,7 +23,7 @@ class TodoistClient {
         return config.apiKey;
     }
 
-    async getProjects() {
+    async getAllProjects() {
         const options = {
             method: 'GET',
             uri: `${baseUrl8}/projects`,
@@ -43,7 +41,7 @@ class TodoistClient {
             }, {});
     }
 
-    getTasks() {
+    getActiveTasks() {
         const options = {
             method: 'GET',
             uri: `${baseUrl8}/tasks`,
@@ -53,10 +51,6 @@ class TodoistClient {
             json: true
         };
         return request(options);
-    }
-
-    fetchAllItems(items) {
-        return Promise.map(items, this.fetchItem.bind(this));
     }
 
     fetchItem(item) {
@@ -89,4 +83,4 @@ class TodoistClient {
     }
 }
 
-module.exports = new TodoistClient();
+module.exports = new TodoistRepository();
