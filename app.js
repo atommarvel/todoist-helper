@@ -19,6 +19,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// parse header data
+app.use(function(req, res, next) {
+  res.locals.keys = {};
+  res.locals.keys.todoist = req.header('Todoist-Api-Key');
+  next();
+});
+
 app.use('/', indexRouter);
 app.use('/api', apiRouter);
 
