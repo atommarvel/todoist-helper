@@ -28,4 +28,4 @@ class QueueTopState {
     }
 }
 
-module.exports = TopQueueState;
+module.exports = QueueTopState;

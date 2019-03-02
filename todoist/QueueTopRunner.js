@@ -8,6 +8,7 @@ class QueueTopRunner {
     constructor(locals) {
         this.locals = new TopQueueLocals(locals);
         this.client = new TodoistClient(this.locals.getTodoistApiKey());
+        console.log(this.locals.getIgnoredProjects());
     }
 
     async invoke() {
@@ -19,12 +20,13 @@ class QueueTopRunner {
         topQueueStateMerged.fakes.forEach(faker => {
             commandList.pushRemoveLabelCommand(faker, this.locals.getQueueTopId());
         });
-        await this.client.postCommand(commandList);
-        console.log("done");
+        console.log(commandList.getCommandBody());
+        let result = await this.client.postCommand(commandList);
+        console.log(result);
     }
 
     async compileTopQueueState() {
-        let projects = await this.client.getProjects();
+        let projects = await this.client.getProjectsMap();
         let tasks = await this.client.getTasks();
 
         // insert tasks into their respective projects
@@ -33,6 +35,8 @@ class QueueTopRunner {
         });
 
         this.filterIgnoredProjects(projects);
+
+        console.log(projects);
 
         // Combine together all the queueTop states from each project
         return Array.from(projects.values())
@@ -53,6 +57,7 @@ class QueueTopRunner {
                 projects.delete(key);
             }
         }
+        console.log(projects);
     }
 
     isProjectIgnored(projectId) {

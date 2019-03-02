@@ -27,6 +27,12 @@ class Project {
             let isCandidate = task.id === candidateId;
             return isLabeledTopQueue && !isCandidate;
         });
+        if (candidate) {
+            console.log(`adding ${candidate.content}`);
+        }
+        if (fakers.length > 0) {
+            console.log(`removing ${fakers[0].id}`);
+        }
         return new TopQueueState(candidate, fakers);
     }
 

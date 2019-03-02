@@ -12,12 +12,12 @@ const baseUrl8 = "https://beta.todoist.com/API/v8";
 
 class TodoistClient {
 
-    constructor(apikey) {
+    constructor(apiKey) {
         this.syncToken = "*";
-        this.apiKey = apikey;
+        this.apiKey = apiKey;
     }
 
-    async getProjects() {
+    async getProjectsMap() {
         const options = {
             method: 'GET',
             uri: `${baseUrl8}/projects`,
@@ -33,6 +33,18 @@ class TodoistClient {
                 map.set(project.id, project);
                 return map;
             }, new Map());
+    }
+
+    getLabels() {
+        const options = {
+            method: 'GET',
+            uri: `${baseUrl8}/labels`,
+            headers: {
+                'Authorization': `Bearer ${this.apiKey}`
+            },
+            json: true
+        };
+        return request(options);
     }
 
     getTasks() {

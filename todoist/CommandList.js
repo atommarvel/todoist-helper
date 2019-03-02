@@ -23,27 +23,19 @@ class CommandList {
 
     pushAddLabelCommand(task, labelId) {
         let labelIds = addIfMissing(task['label_ids'], labelId);
-        this.updateLabelCommand(task.id, labelIds);
+        this.createUpdateLabelCommand(task.id, labelIds);
     }
 
     pushRemoveLabelCommand(task, labelId) {
         let labelIds = removeIfPresent(task['label_ids'], labelId);
-        this.updateLabelCommand(task.id, labelIds);
+        this.createUpdateLabelCommand(task.id, labelIds);
     }
 
     createUpdateLabelCommand(taskId, labels) {
-        this.addItemUpdateCommand({
+        this.pushAddItemUpdateCommand({
             id: taskId,
             labels: labels
         });
-    }
-
-    createCommand(type, args) {
-        return {
-            uuid: uuidv4(),
-            type: type,
-            args: args
-        }
     }
 }
 
