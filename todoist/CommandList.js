@@ -9,29 +9,29 @@ class CommandList {
         return JSON.stringify(this.commands);
     }
 
-    addUncompleteCommand(ids) {
+    pushAddUncompleteCommand(ids) {
         this.commands.push(
             new Command("item_uncomplete", {ids: ids})
         );
     }
 
-    addItemUpdateCommand(updates) {
+    pushAddItemUpdateCommand(updates) {
         this.commands.push(
             new Command("item_update", updates)
         );
     }
 
-    addLabelCommand(task, labelId) {
+    pushAddLabelCommand(task, labelId) {
         let labelIds = addIfMissing(task['label_ids'], labelId);
         this.updateLabelCommand(task.id, labelIds);
     }
 
-    removeLabelCommand(task, labelId) {
+    pushRemoveLabelCommand(task, labelId) {
         let labelIds = removeIfPresent(task['label_ids'], labelId);
         this.updateLabelCommand(task.id, labelIds);
     }
 
-    updateLabelCommand(taskId, labels) {
+    createUpdateLabelCommand(taskId, labels) {
         this.addItemUpdateCommand({
             id: taskId,
             labels: labels

@@ -3,7 +3,7 @@
  * candidate: task that should be given the label topQueue
  * fakes: tasks that should have the label topQueue removed
  */
-class TopQueueState {
+class QueueTopState {
     constructor(candidate, fakes) {
         this.candidates = [];
         this.fakes = [];

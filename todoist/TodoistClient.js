@@ -1,9 +1,7 @@
 const Promise = require('bluebird');
 const request = require('request-promise');
 
-const CommandList = require('./CommandList');
 const Project = require('./Project');
-const config = require('./todoist.json');
 const baseUrl7 = "https://todoist.com/api/v7";
 const baseUrl8 = "https://beta.todoist.com/API/v8";
 
@@ -14,15 +12,9 @@ const baseUrl8 = "https://beta.todoist.com/API/v8";
 
 class TodoistClient {
 
-    constructor() {
+    constructor(apikey) {
         this.syncToken = "*";
-    }
-
-    /**
-     * Found under Settings > Integrations > API token
-     */
-    getAPIKey() {
-        return config.apiKey;
+        this.apiKey = apikey;
     }
 
     async getProjects() {
@@ -30,7 +22,7 @@ class TodoistClient {
             method: 'GET',
             uri: `${baseUrl8}/projects`,
             headers: {
-                'Authorization': `Bearer ${this.getAPIKey()}`
+                'Authorization': `Bearer ${this.apiKey}`
             },
             json: true
         };
@@ -38,9 +30,9 @@ class TodoistClient {
         return projectsJsonList
             .map(proj => new Project(proj))
             .reduce((map, project) => {
-                map[project.id] = project;
+                map.set(project.id, project);
                 return map;
-            }, {});
+            }, new Map());
     }
 
     getTasks() {
@@ -48,7 +40,7 @@ class TodoistClient {
             method: 'GET',
             uri: `${baseUrl8}/tasks`,
             headers: {
-                'Authorization': `Bearer ${this.getAPIKey()}`
+                'Authorization': `Bearer ${this.apiKey}`
             },
             json: true
         };
@@ -64,7 +56,7 @@ class TodoistClient {
             method: 'POST',
             uri: `${baseUrl7}/items/get`,
             body: {
-                token: this.getAPIKey(),
+                token: this.apiKey,
                 item_id: item.id
             },
             json: true // Automatically stringifies the body to JSON
@@ -80,7 +72,7 @@ class TodoistClient {
             method: 'POST',
             uri: `${baseUrl7}/sync`,
             body: {
-                token: this.getAPIKey(),
+                token: this.apiKey,
                 commands: commandList.getCommandBody()
             },
             json: true // Automatically stringifies the body to JSON
@@ -89,4 +81,4 @@ class TodoistClient {
     }
 }
 
-module.exports = new TodoistClient();
+module.exports = TodoistClient;
