@@ -1,5 +1,0 @@
-{
-  "apiKey" : "Found under Settings > Integrations > API token",
-  "projectIgnores" : "projectId,projectId,projectId,projectId",
-  "queueTopId" : "labelId"
-}

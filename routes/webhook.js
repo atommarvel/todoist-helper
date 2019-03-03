@@ -5,8 +5,6 @@ const router = express.Router();
 const kue = require('kue');
 const queue = Promise.promisifyAll(kue.createQueue());
 
-const config = require('./webhookConfig');
-
 const RECEPTIONIST_BASE_URL = "http://localhost:3000";
 const CLEANUP_JOB_TYPE = 'cleanTodoist';
 const DELAY_MS = 5000;
@@ -35,11 +33,11 @@ async function cleanTodoist() {
         method: 'GET',
         uri: `${RECEPTIONIST_BASE_URL}/api/job/queueTop`,
         qs: {
-            'projectIgnores': config.projectIgnores,
-            'queueTopId': config.queueTopId
+            'projectIgnores': process.env.RECEPTIONIST_WEBHOOK_PROJ_IGNORES,
+            'queueTopId': process.env.RECEPTIONIST_WEBHOOK_QUEUE_TOP_ID
         },
         headers: {
-            'Todoist-Api-Key': config.apiKey
+            'Todoist-Api-Key': process.env.RECEPTIONIST_WEBHOOK_TODOIST_API_KEY
         },
         json: true
     };
