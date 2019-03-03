@@ -1,4 +1,4 @@
-const TopQueueState = require('./QueueTopState');
+const QueueTopState = require('./QueueTopState');
 
 class Project {
     constructor(json) {
@@ -17,27 +17,26 @@ class Project {
         this.tasks.sort(taskOrderCompare);
         // find top task without due date field
         let candidate = this.tasks.find(this.meetsQueueTopRequirements.bind(this));
-        let candidateId = -1;
-        if (candidate) {
-            candidateId = candidate.id;
-        }
+        let candidateId = candidate ? candidate.id : -1;
         // check if any other task already had topqueue
         let fakers = this.tasks.filter(task => {
             let isLabeledTopQueue = task['label_ids'].indexOf(queueTopId) !== -1;
             let isCandidate = task.id === candidateId;
             return isLabeledTopQueue && !isCandidate;
         });
-        if (candidate) {
-            console.log(`adding ${candidate.content}`);
-        }
-        if (fakers.length > 0) {
-            console.log(`removing ${fakers[0].id}`);
-        }
-        return new TopQueueState(candidate, fakers);
+        let queueTopState = new QueueTopState(candidate, fakers);
+        this.logQueueTop(queueTopState);
+        return queueTopState;
+    }
+
+    logQueueTop(queueTopState) {
+        console.log(`Project ${this.name} (${this.id}):`);
+        queueTopState.log('\t• ');
     }
 
     meetsQueueTopRequirements(task) {
-        return !('due' in task) &&
+        return task &&
+            !('due' in task) &&
             task.indent === 1;
     }
 }

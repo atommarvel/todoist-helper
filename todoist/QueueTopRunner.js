@@ -6,9 +6,10 @@ const CommandList = require('./CommandList');
 class QueueTopRunner {
 
     constructor(locals) {
+        console.log(`Running job with the following locals:`);
+        console.log(locals);
         this.locals = new TopQueueLocals(locals);
         this.client = new TodoistClient(this.locals.getTodoistApiKey());
-        console.log(this.locals.getIgnoredProjects());
     }
 
     async invoke() {
@@ -20,9 +21,19 @@ class QueueTopRunner {
         topQueueStateMerged.fakes.forEach(faker => {
             commandList.pushRemoveLabelCommand(faker, this.locals.getQueueTopId());
         });
-        console.log(commandList.getCommandBody());
+        if (commandList.getCommandCount() === 0) {
+            console.log("No commands to post.");
+        } else {
+            this.postCommandList(commandList);
+        }
+    }
+
+    async postCommandList(commandList) {
+        console.log("Posting command list:");
+        console.log(commandList.getPrettyCommandBody());
         let result = await this.client.postCommand(commandList);
-        console.log(result);
+        console.log("Todoist response:");
+        console.log(JSON.stringify(result, null, 2));
     }
 
     async compileTopQueueState() {
@@ -35,8 +46,6 @@ class QueueTopRunner {
         });
 
         this.filterIgnoredProjects(projects);
-
-        console.log(projects);
 
         // Combine together all the queueTop states from each project
         return Array.from(projects.values())
@@ -57,7 +66,6 @@ class QueueTopRunner {
                 projects.delete(key);
             }
         }
-        console.log(projects);
     }
 
     isProjectIgnored(projectId) {

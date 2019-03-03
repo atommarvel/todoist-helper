@@ -26,6 +26,13 @@ class QueueTopState {
     addFakes(fakes) {
         this.fakes = this.fakes.concat(fakes);
     }
+
+    log(prefix) {
+        const addPrefix = `${prefix}candidate: `;
+        this.candidates.forEach(value => console.log(`${addPrefix}${value.content}`));
+        const rmPrefix = `${prefix}fake: `;
+        this.fakes.forEach(value => console.log(`${rmPrefix}${value.content}`));
+    }
 }
 
 module.exports = QueueTopState;

@@ -5,8 +5,16 @@ class CommandList {
         this.commands = [];
     }
 
+    getCommandCount() {
+        return this.commands.length;
+    }
+
     getCommandBody() {
         return JSON.stringify(this.commands);
+    }
+
+    getPrettyCommandBody() {
+        return JSON.stringify(this.commands, null, 2);
     }
 
     pushAddUncompleteCommand(ids) {
@@ -22,11 +30,17 @@ class CommandList {
     }
 
     pushAddLabelCommand(task, labelId) {
+        if (task['label_ids'].indexOf(labelId) !== -1) {
+            return; // don't push a command since the given task already has the provided labelId
+        }
         let labelIds = addIfMissing(task['label_ids'], labelId);
         this.createUpdateLabelCommand(task.id, labelIds);
     }
 
     pushRemoveLabelCommand(task, labelId) {
+        if (task['label_ids'].indexOf(labelId) === -1) {
+            return; // don't push a command since the given task already doesn't have the provided labelId
+        }
         let labelIds = removeIfPresent(task['label_ids'], labelId);
         this.createUpdateLabelCommand(task.id, labelIds);
     }
