@@ -5,7 +5,7 @@ const router = express.Router();
 const kue = require('kue');
 const queue = Promise.promisifyAll(kue.createQueue());
 
-const RECEPTIONIST_BASE_URL = "http://localhost:3000";
+const RECEPTIONIST_BASE_URL = process.env.RECEPTIONIST_WEBHOOK_BASE_URL;
 const CLEANUP_JOB_TYPE = 'cleanTodoist';
 const DELAY_MS = process.env.RECEPTIONIST_WEBHOOK_DELAY;
 
