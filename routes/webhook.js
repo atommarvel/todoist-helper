@@ -16,7 +16,7 @@ queue.process(CLEANUP_JOB_TYPE, async (job, done) => {
 
 router.post('/', async function (req, res) {
     console.log("hooked!");
-    const shouldSchedule = await isAnyJobScheduled();
+    const shouldSchedule = !(await isAnyJobScheduled());
     if (shouldSchedule) {
         scheduleJob();
     }
