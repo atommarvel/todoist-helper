@@ -10,7 +10,11 @@ const CLEANUP_JOB_TYPE = 'cleanTodoist';
 const DELAY_MS = process.env.RECEPTIONIST_WEBHOOK_DELAY;
 
 queue.process(CLEANUP_JOB_TYPE, async (job, done) => {
-    await cleanTodoist();
+    try {
+        await cleanTodoist()
+    } catch (e) {
+        console.log(e)
+    }
     done();
 });
 
@@ -31,7 +35,7 @@ async function isJobQueueClear() {
     return total === 0;
 }
 
-async function cleanTodoist() {
+function cleanTodoist() {
     console.log("run cleanTodoist");
     const options = {
         method: 'GET',
@@ -43,9 +47,10 @@ async function cleanTodoist() {
         headers: {
             'Todoist-Api-Key': process.env.RECEPTIONIST_WEBHOOK_TODOIST_API_KEY
         },
+        timeout: 20000,
         json: true
     };
-    await request(options).then(console.log);
+    request(options).then(console.log);
 }
 
 function scheduleJob() {
