@@ -16,16 +16,19 @@ queue.process(CLEANUP_JOB_TYPE, async (job, done) => {
 
 router.post('/', async function (req, res) {
     console.log("hooked!");
-    const shouldSchedule = !(await isAnyJobScheduled());
+    const shouldSchedule = await isJobQueueClear();
     if (shouldSchedule) {
+        console.log("scheduling...");
         scheduleJob();
+    } else {
+        console.log("no need to schedule");
     }
     res.sendStatus(200);
 });
 
-async function isAnyJobScheduled() {
+async function isJobQueueClear() {
     const total = await queue.delayedCountAsync();
-    return total > 0;
+    return total === 0;
 }
 
 async function cleanTodoist() {
